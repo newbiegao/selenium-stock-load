@@ -1,2 +1,9 @@
 # selenium-stock-load
-use selenium-java load stock web page data to local cvs 
+use : 
+- selenium-java 
+- spring boot 
+- spring data 
+
+load stock web page ( http://data.eastmoney.com/zlsj/ ) data to local cvs 
+
+
