@@ -1,0 +1,13 @@
+
+spring.main.web-application-type: none
+
+logging.level.root: WARN
+logging.level.org.springframework.test: ERROR
+
+
+html.stockStartPage.url: http://data.eastmoney.com/zlsj/2020-09-30-3-2.html
+html.stockTableDivID: default_table
+html.stockTableClass: table-model
+html.stockNextPageClass: pagerbox
+html.stockNextPageText: 下一页
+
