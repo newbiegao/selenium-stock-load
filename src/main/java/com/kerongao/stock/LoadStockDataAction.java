@@ -32,7 +32,7 @@ public class LoadStockDataAction {
             // change stock period and load data
             this.seleniumService.doStockPeriodSelectAction(option);
 
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(5) );
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(3) );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("default_table"))) ;
 
             //  paged load stock table data

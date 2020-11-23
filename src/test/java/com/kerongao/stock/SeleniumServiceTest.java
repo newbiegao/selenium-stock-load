@@ -8,9 +8,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestClass;
-import sun.jvm.hotspot.utilities.Assert;
+
+
 import java.time.Duration;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
@@ -31,8 +34,7 @@ public class SeleniumServiceTest {
     public void loadPageTest(){
 
        String html =  seleniumService.loadPageHtml(URL) ;
-
-       Assert.that( html != null  , " www.baidu.com info html " );
+       assertThat( html ).isNotBlank().describedAs("www.baidu.com info html");
 
     }
 
@@ -59,9 +61,7 @@ public class SeleniumServiceTest {
     public void configTest(){
 
        String pageUrl =  seleniumConfig.getStockStartPage() ;
-
-        Assert.that( pageUrl.equals(STOCK_URL) , " stock start page = " + STOCK_URL );
-
+       assertThat( pageUrl ).isEqualTo(STOCK_URL).describedAs(" stock start page = {}" , STOCK_URL) ;
     }
 
     @Test
@@ -80,8 +80,7 @@ public class SeleniumServiceTest {
         seleniumService.openUrl(STOCK_URL);
         WebElement webElement = seleniumService.findNextPageElement() ;
 
-        Assert.that( webElement.getText().equals("下一页") , " can not find next stock page 下一页 " + webElement.getText() );
-
+        assertThat(webElement.getText()).isEqualTo("下一页").describedAs( " can not find next stock page 下一页 info :{} " , webElement.getText() );
     }
 
     @Test
@@ -100,7 +99,8 @@ public class SeleniumServiceTest {
             System.out.println( " current page index = " + page );
 
         }
-        Assert.that( page > 0 , " do next page aciton error : " + page  );
+
+        assertThat( page ).isGreaterThan( 0 ).describedAs( " do next page aciton error : {} " , page ) ;
 
     }
 
@@ -115,7 +115,7 @@ public class SeleniumServiceTest {
             System.out.println( option ) ;
         } );
 
-       Assert.that( options.size() > 0 , " can't find stock period select options  " );
+        assertThat(options).isNotEmpty().describedAs(" can't find stock period select options  ") ;
 
     }
 
@@ -135,8 +135,7 @@ public class SeleniumServiceTest {
 
         }
 
-        Assert.that( options.size() > 0 ,  " can't find select options " );
-
+        assertThat(options).isNotEmpty().describedAs(" can't find select options ") ;
     }
 
 }
