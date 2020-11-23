@@ -81,7 +81,7 @@ public class SeleniumConfig {
 
         WebDriver webDriver = new FirefoxDriver(firefoxOptions) ;
 
-        webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
+        // webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
 
         return webDriver ;
     }
