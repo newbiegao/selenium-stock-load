@@ -32,14 +32,6 @@ public class SeleniumService {
         this.webDriver = webDriver;
     }
 
-    /**
-    static {
-
-        System.setProperty("webdriver.gecko.driver", "/bin/geckodriver");
-        System.setProperty("webdriver.chrome.driver", "/bin/chromedriver");
-
-    }
-    **/
     public String loadPageHtml( String url  ){
 
         webDriver.get(url);
