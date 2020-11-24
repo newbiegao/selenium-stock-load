@@ -10,4 +10,5 @@ html.stockTableDivID: default_table
 html.stockTableClass: table-model
 html.stockNextPageClass: pagerbox
 html.stockNextPageText: 下一页
+html.pageLoadTimeOut: 2
 

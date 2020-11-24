@@ -37,6 +37,17 @@ public class SeleniumConfig {
     @Value("${html.stockNextPageText}")
     private String stockNextPageText  ;
 
+    @Value("${html.pageLoadTimeOut}")
+    private Integer pageLoadTimeOut ;
+
+    public Integer getPageLoadTimeOut() {
+        return pageLoadTimeOut;
+    }
+
+    public void setPageLoadTimeOut(Integer pageLoadTimeOut) {
+        this.pageLoadTimeOut = pageLoadTimeOut;
+    }
+
     public String getStockNextPageText() {
         return stockNextPageText;
     }

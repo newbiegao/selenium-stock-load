@@ -8,13 +8,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestClass;
-
-
 import java.time.Duration;
 import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 @SpringBootTest
 public class SeleniumServiceTest {
@@ -41,13 +37,8 @@ public class SeleniumServiceTest {
     @Test
     public void loadStockPageHtmlTest(){
 
-        System.out.println("==============");
-
         String html = seleniumService.loadPageHtml(STOCK_URL) ;
-
-        System.out.println(html);
-
-        System.out.println("==============");
+        assertThat( html ).isNotBlank().describedAs(" load page html is blank ");
     }
 
 
@@ -87,6 +78,7 @@ public class SeleniumServiceTest {
     public void clickNextPageActionTest() throws Exception {
 
         seleniumService.openUrl(STOCK_URL);
+
         WebElement webElement = null ;
         int page = -1 ;
         while ( (  webElement = seleniumService.findNextPageElement()) != null  )
@@ -109,7 +101,7 @@ public class SeleniumServiceTest {
 
         seleniumService.openUrl(STOCK_URL);
 
-       List<String> options = this.seleniumService.findStockPeriodSelectOptions() ;
+        List<String> options = this.seleniumService.findStockPeriodSelectOptions() ;
 
         options.forEach( option -> {
             System.out.println( option ) ;

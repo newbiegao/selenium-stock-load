@@ -32,8 +32,8 @@ public class LoadStockDataAction {
             // change stock period and load data
             this.seleniumService.doStockPeriodSelectAction(option);
 
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(3) );
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("default_table"))) ;
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
             //  paged load stock table data
             loadStockOnePeriodData( option , stockTableList ) ;
@@ -57,8 +57,8 @@ public class LoadStockDataAction {
             seleniumService.nextPageClickAction( nextPageElement ) ;
 
             // wait stock data load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumService.getWebDriver() , Duration.ofSeconds(1) );
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("default_table"))) ;
+            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
             WebElement currentStockPage = seleniumService.findCurrentStockTable() ;
             addStockTableElementToDataModel(currentStockPage , stockTableList , period ) ;
@@ -66,7 +66,12 @@ public class LoadStockDataAction {
 
     }
 
-
+    /**
+     *  transfer stock data table weelement to data model
+     * @param webElement
+     * @param stockTableList
+     * @param period
+     */
     private void addStockTableElementToDataModel(WebElement webElement , List<StockTable> stockTableList , String period ){
 
         WebElement tbody  = webElement.findElement(By.tagName("tbody")) ;
