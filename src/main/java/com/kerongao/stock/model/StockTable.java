@@ -129,7 +129,7 @@ public class StockTable {
         this.financialCount = Integer.valueOf( webElementList.get(4).getText());
         this.stockCount = Double.valueOf( webElementList.get(5).getText() );
         this.stockRate  = Double.valueOf(webElementList.get(6).getText()) ;
-        this.upDown  = webElementList.get(6).getText() ;
+        this.upDown  = webElementList.get(7).getText() ;
         this.upDownCount = Double.valueOf(webElementList.get(8).getText()) ;
         this.upDownRate = Double.valueOf(webElementList.get(9).getText()) ;
 

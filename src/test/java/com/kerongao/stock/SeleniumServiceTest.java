@@ -30,7 +30,7 @@ public class SeleniumServiceTest {
     public void loadPageTest(){
 
        String html =  seleniumService.loadPageHtml(URL) ;
-       assertThat( html ).isNotBlank().describedAs("www.baidu.com info html");
+       assertThat( html ).as(html).isNotBlank().describedAs("www.baidu.com info html");
 
     }
 
@@ -62,6 +62,8 @@ public class SeleniumServiceTest {
         WebElement webElement =  seleniumService.findCurrentStockTable() ;
 
         System.out.println(webElement.getText()) ;
+
+        assertThat( webElement ).isNotNull().describedAs(" can't find stock table webElement ") ;
 
     }
 
