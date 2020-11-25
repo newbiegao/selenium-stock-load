@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Service
 public class LoadStockDataAction {
+
+    private static Logger logger = LoggerFactory.getLogger(LoadStockDataAction.class) ;
 
     @Autowired
     private SeleniumStockDataService seleniumStockDataService;
@@ -72,6 +76,11 @@ public class LoadStockDataAction {
         return stockTableList ;
     }
 
+    /**
+     * load one period all stock data , and paged load all stock data in period
+     * @param period
+     * @param stockTableList
+     */
     public void loadStockOnePeriodData( String period  , List<StockTable> stockTableList ){
 
         // get first page stock data
@@ -80,8 +89,8 @@ public class LoadStockDataAction {
 
         // next page stock data page
         WebElement nextPageElement = null ;
-        // do next page action and get other stock page data
 
+        // do next page action and get other stock page data
         while ( (nextPageElement =  seleniumStockDataService.findNextPageElement()) != null  )
         {
             seleniumStockDataService.nextPageClickAction( nextPageElement ) ;

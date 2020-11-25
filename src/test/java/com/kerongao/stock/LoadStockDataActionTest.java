@@ -2,6 +2,8 @@ package com.kerongao.stock;
 
 import com.kerongao.stock.model.StockTable;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestClass;
@@ -14,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class LoadStockDataActionTest {
+
+    private static Logger logger = LoggerFactory.getLogger(LoadStockDataActionTest.class) ;
 
     @Autowired
     private LoadStockDataAction loadStockDataAction ;
@@ -47,7 +51,7 @@ public class LoadStockDataActionTest {
     @Test
     public void loadStockAllPeriodDataTest (){
 
-        int periodLimit = -1 ;
+        int periodLimit = 1 ;
 
         seleniumStockDataService.openUrl(STOCK_URL);
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData(periodLimit) ;

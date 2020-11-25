@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,7 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsT
 @Service
 public class SeleniumFundListService {
 
-    @Autowired
-    private WebDriver webDriver  ;
+    private static Logger logger = LoggerFactory.getLogger(SeleniumFundListService.class) ;
 
     @Autowired
     private SeleniumConfig seleniumConfig ;
@@ -27,62 +28,53 @@ public class SeleniumFundListService {
     @Autowired
     private SeleniumStockDataService seleniumStockDataService ;
 
-    public void openUrl( String url )
-    {
-        this.webDriver.get( url );
-    }
 
-    public WebDriver getWebDriver() {
-        return webDriver;
-    }
-
-    public void setWebDriver(WebDriver webDriver) {
-        this.webDriver = webDriver;
-    }
-
-    public void closeWindow(){ this.webDriver.close(); this.webDriver.quit(); }
-
-    public List<FundData> loadCurrentStockPageFundListToStockFundList(){
-
-        List<FundData> fundDataList = new ArrayList<>() ;
+    /**
+     * load current stock page data and open each fund link page to get fund list
+     * @return
+     */
+    public void loadCurrentStockPageFundListToStockFundList( List<FundData> fundDataList ){
 
         // get stock table rows and click navigate to fund page
         List<WebElement> currentStockTableRows  =  seleniumStockDataService.findCurrentStockTableRows() ;
 
         // get current windowHandle
-        String originalWindow = webDriver.getWindowHandle();
+        String originalWindow = this.seleniumStockDataService.getWebDriver().getWindowHandle();
 
+        int rowIndex = 0 ;
         //
         for( WebElement trElement : currentStockTableRows ){
+
+            rowIndex++ ;
 
             // open a new window tab
             WebElement colElement =  trElement.findElement(By.className("col")) ;
             colElement.findElement(By.tagName("a")).click();
 
             // switchTo new window tab
-            for( String windowHandle : webDriver.getWindowHandles()  )
+            for( String windowHandle : this.seleniumStockDataService.getWebDriver().getWindowHandles()  )
             {
                 if( !originalWindow.equalsIgnoreCase(windowHandle) )
                 {
-                    webDriver.switchTo().window(windowHandle);
+                    this.seleniumStockDataService.getWebDriver().switchTo().window(windowHandle);
                     break;
                 }
             }
 
             // wait window load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(10) );
             webDriverWait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy( By.id("ccmx_table") , By.className("table-model") ));
 
             // add fund list
+            logger.debug(" start process stock table row : {} , find fund name list " , rowIndex);
             findCurrenWindowFundListWelementTable(fundDataList) ;
 
             // close current window tab
-            this.webDriver.close();
-            this.webDriver.switchTo().window(originalWindow) ;
+            this.seleniumStockDataService.getWebDriver().close();
+            this.seleniumStockDataService.getWebDriver().switchTo().window(originalWindow) ;
 
         }
 
-        return fundDataList ;
     }
 
     /**
@@ -92,7 +84,7 @@ public class SeleniumFundListService {
     private void findCurrenWindowFundListWelementTable( List<FundData> fundDataList ){
 
           // find fund table list table
-          List<WebElement> rowsList =  this.webDriver.findElement(By.id("ccmx_table"))
+          List<WebElement> rowsList =  this.seleniumStockDataService.getWebDriver().findElement(By.id("ccmx_table"))
                     .findElement(By.className("table-model"))
                     .findElement(By.tagName("tbody"))
                     .findElements(By.tagName("tr")) ;
@@ -102,6 +94,12 @@ public class SeleniumFundListService {
 
               // cols : 0 序号  1 机构名称
               List<WebElement> colList = rowElement.findElements(By.tagName("td")) ;
+
+              if( colList.size() < 1 )
+              {
+                  System.out.println("error: " +  rowElement.getText());
+                  continue;
+              }
 
               String fundName = colList.get(1).getText() ;
               String url = colList.get(1).findElement(By.tagName("a")).getAttribute("href") ;

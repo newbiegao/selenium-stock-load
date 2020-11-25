@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestClass;
@@ -14,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class SeleniumStockDataServiceTest {
+
+    private static Logger logger = LoggerFactory.getLogger(SeleniumStockDataServiceTest.class) ;
 
     @Autowired
     private SeleniumStockDataService seleniumStockDataService;
