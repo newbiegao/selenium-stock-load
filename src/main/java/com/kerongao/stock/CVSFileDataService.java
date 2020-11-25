@@ -3,6 +3,8 @@ package com.kerongao.stock;
 import com.kerongao.stock.model.StockTable;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +16,14 @@ import java.util.List;
 @Service
 public class CVSFileDataService {
 
+    private static Logger logger = LoggerFactory.getLogger(CVSFileDataService.class) ;
+
     @Autowired
     private LoadStockDataAction loadStockDataAction ;
 
-    public void loadStockDataToExcelFile( Integer limit ){
+    public void loadStockDataToExcelFile( Integer periodLimit  ){
 
-        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData( limit ) ;
+        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData( periodLimit ) ;
 
         writeToExcelFile(stockTableList) ;
 

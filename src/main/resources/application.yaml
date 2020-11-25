@@ -3,6 +3,7 @@ spring.main.web-application-type: none
 
 logging.level.root: WARN
 logging.level.org.springframework.test: ERROR
+logging.level.com.kerongao.stock: DEBUG
 
 
 html.stockStartPage.url: http://data.eastmoney.com/zlsj/2020-09-30-3-2.html

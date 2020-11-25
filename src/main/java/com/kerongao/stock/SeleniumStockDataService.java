@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SeleniumService {
+public class SeleniumStockDataService {
+
+    private static Logger logger = LoggerFactory.getLogger(SeleniumStockDataService.class) ;
 
     @Autowired
     private WebDriver webDriver  ;
@@ -41,6 +45,16 @@ public class SeleniumService {
     public void openUrl( String url )
     {
         this.webDriver.get( url );
+    }
+
+    public List<WebElement> findCurrentStockTableRows(){
+
+        WebElement tableElement = findCurrentStockTable() ;
+
+        WebElement tbody  = tableElement.findElement(By.tagName("tbody")) ;
+        List<WebElement> trList = tbody.findElements(By.tagName("tr")) ;
+
+        return trList ;
     }
 
     public WebElement findCurrentStockTable( ){
@@ -83,7 +97,7 @@ public class SeleniumService {
         WebElement webElement = this.webDriver.findElement(By.className(seleniumConfig.getStockNextPageClass()))
                 .findElement(By.className("active")) ;
 
-        if ( webElement == null ) { return  -1 ; }
+        if ( webElement == null || webElement.getText().isEmpty() ) { return  -1 ; }
 
         return  Integer.valueOf(webElement.getText()) ;
     }

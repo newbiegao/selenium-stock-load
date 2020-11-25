@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestClass;
@@ -13,10 +15,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class SeleniumServiceTest {
+public class SeleniumStockDataServiceTest {
+
+    private static Logger logger = LoggerFactory.getLogger(SeleniumStockDataServiceTest.class) ;
 
     @Autowired
-    private SeleniumService seleniumService ;
+    private SeleniumStockDataService seleniumStockDataService;
 
     @Autowired
     private SeleniumConfig seleniumConfig ;
@@ -29,7 +33,7 @@ public class SeleniumServiceTest {
     @Test
     public void loadPageTest(){
 
-       String html =  seleniumService.loadPageHtml(URL) ;
+       String html =  seleniumStockDataService.loadPageHtml(URL) ;
        assertThat( html ).as(html).isNotBlank().describedAs("www.baidu.com info html");
 
     }
@@ -37,7 +41,7 @@ public class SeleniumServiceTest {
     @Test
     public void loadStockPageHtmlTest(){
 
-        String html = seleniumService.loadPageHtml(STOCK_URL) ;
+        String html = seleniumStockDataService.loadPageHtml(STOCK_URL) ;
         assertThat( html ).isNotBlank().describedAs(" load page html is blank ");
     }
 
@@ -45,7 +49,7 @@ public class SeleniumServiceTest {
     @AfterTestClass
     public void after(){
 
-        seleniumService.closeWindow();
+        seleniumStockDataService.closeWindow();
     }
 
     @Test
@@ -58,8 +62,8 @@ public class SeleniumServiceTest {
     @Test
     public void findCurrentStockTableTest(){
 
-        seleniumService.openUrl(STOCK_URL);
-        WebElement webElement =  seleniumService.findCurrentStockTable() ;
+        seleniumStockDataService.openUrl(STOCK_URL);
+        WebElement webElement =  seleniumStockDataService.findCurrentStockTable() ;
 
         System.out.println(webElement.getText()) ;
 
@@ -70,8 +74,8 @@ public class SeleniumServiceTest {
     @Test
     public void findStockTableNextPageTest(){
 
-        seleniumService.openUrl(STOCK_URL);
-        WebElement webElement = seleniumService.findNextPageElement() ;
+        seleniumStockDataService.openUrl(STOCK_URL);
+        WebElement webElement = seleniumStockDataService.findNextPageElement() ;
 
         assertThat(webElement.getText()).isEqualTo("下一页").describedAs( " can not find next stock page 下一页 info :{} " , webElement.getText() );
     }
@@ -79,15 +83,15 @@ public class SeleniumServiceTest {
     @Test
     public void clickNextPageActionTest() throws Exception {
 
-        seleniumService.openUrl(STOCK_URL);
+        seleniumStockDataService.openUrl(STOCK_URL);
 
         WebElement webElement = null ;
         int page = -1 ;
-        while ( (  webElement = seleniumService.findNextPageElement()) != null  )
+        while ( (  webElement = seleniumStockDataService.findNextPageElement()) != null  )
         {
-            page =  seleniumService.nextPageClickAction(webElement);
+            page =  seleniumStockDataService.nextPageClickAction(webElement);
              // wait page load stock data
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(5) );
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("default_table"))) ;
 
             System.out.println( " current page index = " + page );
@@ -101,9 +105,9 @@ public class SeleniumServiceTest {
     @Test
     public void findStockPeriodSelectTest(){
 
-        seleniumService.openUrl(STOCK_URL);
+        seleniumStockDataService.openUrl(STOCK_URL);
 
-        List<String> options = this.seleniumService.findStockPeriodSelectOptions() ;
+        List<String> options = this.seleniumStockDataService.findStockPeriodSelectOptions() ;
 
         options.forEach( option -> {
             System.out.println( option ) ;
@@ -116,15 +120,15 @@ public class SeleniumServiceTest {
     @Test
     public void doStockPeriodSelectActionTest(){
 
-        seleniumService.openUrl(STOCK_URL);
-        List<String> options  = this.seleniumService.findStockPeriodSelectOptions() ;
+        seleniumStockDataService.openUrl(STOCK_URL);
+        List<String> options  = this.seleniumStockDataService.findStockPeriodSelectOptions() ;
 
         for( String option : options )
         {
             System.out.println(" do action data : " + option );
-            this.seleniumService.doStockPeriodSelectAction(option);
+            this.seleniumStockDataService.doStockPeriodSelectAction(option);
 
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(5) );
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("default_table"))) ;
 
         }
