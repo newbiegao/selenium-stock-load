@@ -122,6 +122,7 @@ public class StockTable {
 
         this.elementText = webElement.getText() ;
 
+        // get table columns
         List<WebElement> webElementList =  webElement.findElements(By.tagName("td")) ;
 
         this.stockCode = webElementList.get(1).getText() ;

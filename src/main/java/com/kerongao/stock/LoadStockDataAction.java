@@ -75,8 +75,8 @@ public class LoadStockDataAction {
     public void loadStockOnePeriodData( String period  , List<StockTable> stockTableList ){
 
         // get first page stock data
-        WebElement firstStockTable = seleniumStockDataService.findCurrentStockTable() ;
-        addStockTableElementToDataModel(firstStockTable , stockTableList , period ) ;
+        List<WebElement>  firstStockTableRows = seleniumStockDataService.findCurrentStockTableRows() ;
+        addStockTableElementToDataModel(firstStockTableRows , stockTableList , period ) ;
 
         // next page stock data page
         WebElement nextPageElement = null ;
@@ -90,24 +90,21 @@ public class LoadStockDataAction {
             WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
-            WebElement currentStockPage = seleniumStockDataService.findCurrentStockTable() ;
-            addStockTableElementToDataModel(currentStockPage , stockTableList , period ) ;
+            List<WebElement> currentStockTableRows = seleniumStockDataService.findCurrentStockTableRows() ;
+            addStockTableElementToDataModel(currentStockTableRows , stockTableList , period ) ;
         }
 
     }
 
     /**
-     *  transfer stock data table weelement to data model
-     * @param webElement
+     * transfer stock data table weelement to data model
+     * @param currentStockTableRows
      * @param stockTableList
      * @param period
      */
-    private void addStockTableElementToDataModel(WebElement webElement , List<StockTable> stockTableList , String period ){
+    private void addStockTableElementToDataModel(List<WebElement> currentStockTableRows , List<StockTable> stockTableList , String period ){
 
-        WebElement tbody  = webElement.findElement(By.tagName("tbody")) ;
-        List<WebElement> trList = tbody.findElements(By.tagName("tr")) ;
-
-        for( WebElement element : trList ){
+        for( WebElement element : currentStockTableRows ){
             StockTable stockTable = new StockTable() ;
             stockTable.setPeriod(period);
             stockTable.importWebElement(element) ;

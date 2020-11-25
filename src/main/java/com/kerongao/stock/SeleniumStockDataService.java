@@ -43,6 +43,16 @@ public class SeleniumStockDataService {
         this.webDriver.get( url );
     }
 
+    public List<WebElement> findCurrentStockTableRows(){
+
+        WebElement tableElement = findCurrentStockTable() ;
+
+        WebElement tbody  = tableElement.findElement(By.tagName("tbody")) ;
+        List<WebElement> trList = tbody.findElements(By.tagName("tr")) ;
+
+        return trList ;
+    }
+
     public WebElement findCurrentStockTable( ){
 
        WebElement webElement = this.webDriver.findElement(By.id(seleniumConfig.getStockTableDivID()))
