@@ -32,7 +32,7 @@ public class LoadStockDataActionTest {
     @Test
     public void loadStockAllPeriodDataTest (){
 
-        int pageLimit = 4 ;
+        int pageLimit = 2 ;
 
         seleniumService.openUrl(STOCK_URL);
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData(pageLimit) ;
