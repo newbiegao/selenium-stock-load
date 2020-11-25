@@ -47,7 +47,7 @@ public class LoadFundDataListActionTest {
     @AfterTestClass
     public void after(){
 
-      //  seleniumStockDataService.closeWindow();
+        seleniumStockDataService.closeWindow();
     }
 
 }

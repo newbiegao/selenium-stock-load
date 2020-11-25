@@ -44,12 +44,20 @@ public class LoadFundDataListAction {
         {
             pageIndex++ ;
 
+            // do next page click action
             seleniumStockDataService.nextPageClickAction( nextPageElement ) ;
 
             // wait stock data load
             WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
+         //   webDriverWait.until( ExpectedConditions.visibilityOfNestedElementsLocatedBy( By.id(seleniumConfig.getStockTableDivID()) , By.className(seleniumConfig.getStockTableClass()) ));
 
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(
+                    this.seleniumStockDataService.getWebDriver().findElement(By.id(seleniumConfig.getStockTableDivID()))
+                    .findElement(By.className(seleniumConfig.getStockTableClass()))
+                    .findElement(By.tagName("tbody"))
+                    .findElements(By.tagName("tr")).get(0)
+                    .findElements(By.tagName("td")).get(4)
+            )) ;
             logger.debug(" start process stock table page : {} , find fund name list " , pageIndex);
             seleniumFundListService.loadCurrentStockPageFundListToStockFundList(fundDataList) ;
 

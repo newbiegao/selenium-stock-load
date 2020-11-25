@@ -51,6 +51,10 @@ public class SeleniumFundListService {
             WebElement colElement =  trElement.findElement(By.className("col")) ;
             colElement.findElement(By.tagName("a")).click();
 
+            // waite window open and load
+            WebDriverWait windowWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
+            windowWait.until( ExpectedConditions.numberOfWindowsToBe(2));
+
             // switchTo new window tab
             for( String windowHandle : this.seleniumStockDataService.getWebDriver().getWindowHandles()  )
             {
@@ -62,12 +66,12 @@ public class SeleniumFundListService {
             }
 
             // wait window load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(10) );
+            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(30) );
             webDriverWait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy( By.id("ccmx_table") , By.className("table-model") ));
 
             // add fund list
             logger.debug(" start process stock table row : {} , find fund name list " , rowIndex);
-            findCurrenWindowFundListWelementTable(fundDataList) ;
+            findCurrenWindowFundListWeblementTable(fundDataList) ;
 
             // close current window tab
             this.seleniumStockDataService.getWebDriver().close();
@@ -81,7 +85,7 @@ public class SeleniumFundListService {
      * in current window page find fund list table and get fund into fundDataList
      * @param fundDataList
      */
-    private void findCurrenWindowFundListWelementTable( List<FundData> fundDataList ){
+    private void findCurrenWindowFundListWeblementTable( List<FundData> fundDataList ){
 
           // find fund table list table
           List<WebElement> rowsList =  this.seleniumStockDataService.getWebDriver().findElement(By.id("ccmx_table"))
@@ -92,12 +96,14 @@ public class SeleniumFundListService {
           // add fund table list table rows to FundData List
           for( WebElement  rowElement :rowsList ){
 
+              logger.debug(" start load fund name and url from fund list table : {} " , rowElement.getText() );
+
               // cols : 0 序号  1 机构名称
               List<WebElement> colList = rowElement.findElements(By.tagName("td")) ;
 
-              if( colList.size() < 1 )
+              if( colList.size() < 2 )
               {
-                  System.out.println("error: " +  rowElement.getText());
+                  logger.error(" load fund name and url from fund list table error innerHtml is : { } " , rowElement.getText() );
                   continue;
               }
 
