@@ -17,9 +17,9 @@ public class CVSFileDataService {
     @Autowired
     private LoadStockDataAction loadStockDataAction ;
 
-    public void loadStockDataToExcelFile( Integer limit ){
+    public void loadStockDataToExcelFile( Integer periodLimit  ){
 
-        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData( limit ) ;
+        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData( periodLimit ) ;
 
         writeToExcelFile(stockTableList) ;
 

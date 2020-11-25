@@ -15,20 +15,20 @@ public class CVSFileDataServiceTest {
     private CVSFileDataService cvsFileDataService ;
 
     @Autowired
-    private SeleniumService seleniumService ;
+    private SeleniumStockDataService seleniumStockDataService;
 
     private static String STOCK_URL = "http://data.eastmoney.com/zlsj/2020-09-30-3-2.html" ;
 
     @AfterTestClass
     public void after(){
 
-        seleniumService.closeWindow();
+        seleniumStockDataService.closeWindow();
     }
 
     @Test
     public void loadStockDataToExcelFileTest(){
 
-        seleniumService.openUrl(STOCK_URL);
+        seleniumStockDataService.openUrl(STOCK_URL);
         cvsFileDataService.loadStockDataToExcelFile(2);
     }
 

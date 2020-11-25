@@ -19,23 +19,38 @@ public class LoadStockDataActionTest {
     private LoadStockDataAction loadStockDataAction ;
 
     @Autowired
-    private SeleniumService seleniumService ;
+    private SeleniumStockDataService seleniumStockDataService;
 
     private static String STOCK_URL = "http://data.eastmoney.com/zlsj/2020-09-30-3-2.html" ;
 
     @AfterTestClass
     public void after(){
 
-        seleniumService.closeWindow();
+        seleniumStockDataService.closeWindow();
+    }
+
+    @Test
+    public void  loadStockAllPeriodDataByRangeTest(){
+
+        int start = 2 ;
+        int length = 2 ;
+
+        seleniumStockDataService.openUrl(STOCK_URL);
+        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodDataByRange(start,length) ;
+        stockTableList.forEach( stockTable -> {
+            System.out.println(stockTable.getElementText()) ;
+        } );
+
+        assertThat( stockTableList ).isNotEmpty().describedAs("can't load stock data") ;
     }
 
     @Test
     public void loadStockAllPeriodDataTest (){
 
-        int pageLimit = 4 ;
+        int periodLimit = -1 ;
 
-        seleniumService.openUrl(STOCK_URL);
-        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData(pageLimit) ;
+        seleniumStockDataService.openUrl(STOCK_URL);
+        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData(periodLimit) ;
 
         stockTableList.forEach( stockTable -> {
             System.out.println(stockTable.getElementText()) ;
@@ -47,7 +62,7 @@ public class LoadStockDataActionTest {
     @Test
     public void loadStockOnePeriodDataTest(){
 
-        seleniumService.openUrl(STOCK_URL);
+        seleniumStockDataService.openUrl(STOCK_URL);
 
         List<StockTable> stockTableList = new ArrayList<>() ;
 

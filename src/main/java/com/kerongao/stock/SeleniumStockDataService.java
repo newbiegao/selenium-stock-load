@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SeleniumService {
+public class SeleniumStockDataService {
 
     @Autowired
     private WebDriver webDriver  ;
@@ -83,7 +83,7 @@ public class SeleniumService {
         WebElement webElement = this.webDriver.findElement(By.className(seleniumConfig.getStockNextPageClass()))
                 .findElement(By.className("active")) ;
 
-        if ( webElement == null ) { return  -1 ; }
+        if ( webElement == null || webElement.getText().isEmpty() ) { return  -1 ; }
 
         return  Integer.valueOf(webElement.getText()) ;
     }

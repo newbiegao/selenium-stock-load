@@ -16,23 +16,53 @@ import java.util.List;
 public class LoadStockDataAction {
 
     @Autowired
-    private SeleniumService seleniumService ;
+    private SeleniumStockDataService seleniumStockDataService;
 
     @Autowired
     private SeleniumConfig seleniumConfig ;
 
-    public List<StockTable> loadStockAllPeriodData( int limit ){
+    public List<StockTable> loadStockAllPeriodDataByRange( int start  , int length ){
 
-        List<String> options  = this.seleniumService.findStockPeriodSelectOptions() ;
+        List<String> options  = this.seleniumStockDataService.findStockPeriodSelectOptions() ;
 
         List<StockTable> stockTableList = new ArrayList<>() ;
 
-        for( String option : options.subList(0 , limit ) )
+        for( int i = 0 ; i < options.size() ; i++ ){
+
+            // change stock period and load data
+            this.seleniumStockDataService.doStockPeriodSelectAction(options.get(i));
+
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
+
+            if( i >= start && i < ( start + length ) ){
+                //  paged load stock table data
+                loadStockOnePeriodData( options.get(i) , stockTableList ) ;
+            }
+        }
+
+        return stockTableList ;
+    }
+
+    /**
+     * load stock data by period count limit
+     * @param periodLimit  if periodLimit < 0 then load all period stock data
+     * @return
+     */
+    public List<StockTable> loadStockAllPeriodData( int periodLimit ){
+
+        List<String> options  = this.seleniumStockDataService.findStockPeriodSelectOptions() ;
+
+        List<StockTable> stockTableList = new ArrayList<>() ;
+
+        Integer periodCount = periodLimit > 0 ?  periodLimit : options.size() ;
+
+        for( String option : options.subList(0 , periodCount ) )
         {
             // change stock period and load data
-            this.seleniumService.doStockPeriodSelectAction(option);
+            this.seleniumStockDataService.doStockPeriodSelectAction(option);
 
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
             //  paged load stock table data
@@ -45,22 +75,22 @@ public class LoadStockDataAction {
     public void loadStockOnePeriodData( String period  , List<StockTable> stockTableList ){
 
         // get first page stock data
-        WebElement firstStockTable = seleniumService.findCurrentStockTable() ;
+        WebElement firstStockTable = seleniumStockDataService.findCurrentStockTable() ;
         addStockTableElementToDataModel(firstStockTable , stockTableList , period ) ;
 
         // next page stock data page
         WebElement nextPageElement = null ;
         // do next page action and get other stock page data
 
-        while ( (nextPageElement =  seleniumService.findNextPageElement()) != null  )
+        while ( (nextPageElement =  seleniumStockDataService.findNextPageElement()) != null  )
         {
-            seleniumService.nextPageClickAction( nextPageElement ) ;
+            seleniumStockDataService.nextPageClickAction( nextPageElement ) ;
 
             // wait stock data load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
-            WebElement currentStockPage = seleniumService.findCurrentStockTable() ;
+            WebElement currentStockPage = seleniumStockDataService.findCurrentStockTable() ;
             addStockTableElementToDataModel(currentStockPage , stockTableList , period ) ;
         }
 
