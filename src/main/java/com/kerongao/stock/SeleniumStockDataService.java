@@ -80,7 +80,10 @@ public class SeleniumStockDataService {
             }
         }  ) ;
 
-        if( webElements.isEmpty() ) {return  null  ;}
+        if( webElements.isEmpty() ) {
+            logger.warn(" can't find next page <a> element ");
+            return  null  ;
+        }
         return webElements.get(0) ;
     }
 
@@ -93,12 +96,24 @@ public class SeleniumStockDataService {
 
         nextPageElement.click();
 
+        // wait stock data load
+       //  WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , Duration.ofSeconds(5) );
+        WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 5 );
+        webDriverWait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(
+                By.id(seleniumConfig.getStockTableDivID()) ,
+                By.className(seleniumConfig.getStockTableClass())
+        )) ;
+
         // find current page
         WebElement webElement = this.webDriver.findElement(By.className(seleniumConfig.getStockNextPageClass()))
                 .findElement(By.className("active")) ;
 
-        if ( webElement == null || webElement.getText().isEmpty() ) { return  -1 ; }
+        if ( webElement == null || webElement.getText().isEmpty() ) {
+            logger.warn(" can't find current page when next page click ");
+            return  -1 ;
+        }
 
+        logger.debug(" do next page click , get new current page : {} " , webElement.getText() );
         return  Integer.valueOf(webElement.getText()) ;
     }
 

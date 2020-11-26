@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,27 +24,48 @@ public class CVSFileDataService {
     @Autowired
     private LoadStockDataAction loadStockDataAction ;
 
+    /**
+     * load period stock data by periodLimit to excel file
+     * @param periodLimit if periodLimit < 0 then load all period stock data
+     */
     public void loadStockDataToExcelFile( Integer periodLimit  ){
 
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData( periodLimit ) ;
-
-        writeToExcelFile(stockTableList) ;
+        writeStockDataToExcelFile(stockTableList) ;
 
     }
 
-    public void writeToExcelFile(List<StockTable> stockTableList ){
+    /**
+     * load period stock data by period range  to excel file
+     * @param start  period start
+     * @param periodLength period count
+     */
+    public void loadStockDataToExcelFile(Integer start  ,  Integer periodLength  ){
+
+        List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodDataByRange(start , periodLength) ;
+
+        writeStockDataToExcelFile(stockTableList) ;
+
+    }
+
+    public void writeStockDataToExcelFile(List<StockTable> stockTableList ){
 
         Workbook workbook = new XSSFWorkbook();
         String currentSheetName = "" ;
         Sheet sheet = null ;
         Integer rowIndex = 1 ;
+        Integer sheetCount = 0 ;
+        Integer rowCount = 0  ;
         for( StockTable stockTable : stockTableList ){
+
+            rowCount++ ;
 
             if(!stockTable.getPeriod().equalsIgnoreCase(currentSheetName)) {
                 currentSheetName = stockTable.getPeriod() ;
                 sheet = workbook.createSheet(currentSheetName);
                 createHeader(workbook , sheet) ;
                 rowIndex = 1 ;
+                sheetCount ++ ;
             }
             // add row to sheet
             addRow(workbook , sheet , stockTable , rowIndex ) ;
@@ -49,7 +73,8 @@ public class CVSFileDataService {
             rowIndex++ ;
         }
 
-        saveFile(workbook) ;
+        String fileName =  saveFile(workbook) ;
+        logger.debug(" load stock data rowCount : {}  , sheetCount: {} ,  and save to file : {} " , rowCount , sheetCount , fileName );
     }
 
     private void createHeader( Workbook workbook ,  Sheet sheet ){
@@ -163,15 +188,20 @@ public class CVSFileDataService {
 
     }
 
-    private void saveFile( Workbook workbook ){
+    private String  saveFile( Workbook workbook ){
 
         File currDir = new File(".");
         String path = currDir.getAbsolutePath();
-        String fileLocation = path.substring(0, path.length() - 1) + "temp.xlsx";
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss") ;
+
+        String fileName = df.format( new Date() ) + "-" + "stock.xlsx" ;
+        String fileLocation = path.substring(0, path.length() - 1) + fileName ;
 
         try {
             FileOutputStream outputStream = new FileOutputStream(fileLocation);
             workbook.write(outputStream);
+            return fileLocation ;
 
         }
         catch ( Exception e )

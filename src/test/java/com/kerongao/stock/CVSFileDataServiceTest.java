@@ -33,8 +33,9 @@ public class CVSFileDataServiceTest {
     @Test
     public void loadStockDataToExcelFileTest(){
 
+        Integer stockPeriodLimit = 8 ;
         seleniumStockDataService.openUrl(STOCK_URL);
-        cvsFileDataService.loadStockDataToExcelFile(2);
+        cvsFileDataService.loadStockDataToExcelFile(stockPeriodLimit);
     }
 
 }

@@ -13,10 +13,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>selenium-stock-page</name>
 	<description>selenium-stock-page project for Spring Boot</description>
-
+	<!-- 4.0.0-alpha-7 -->
 	<properties>
 		<java.version>1.8</java.version>
-		<selenium.version>4.0.0-alpha-7</selenium.version>
+		<selenium.version>3.141.59</selenium.version>
 		<jsoup.version>1.13.1</jsoup.version>
 		<poi.version>4.1.2</poi.version>
 	</properties>
@@ -63,10 +63,34 @@
 			<artifactId>selenium-java</artifactId>
 			<version>${selenium.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-api</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
+
+		<!--
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-json</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
+		-->
 
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-firefox-driver</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-safari-driver</artifactId>
 			<version>${selenium.version}</version>
 		</dependency>
 

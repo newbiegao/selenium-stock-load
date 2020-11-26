@@ -47,12 +47,18 @@ public class SeleniumFundListService {
 
             rowIndex++ ;
 
+            // find click <a>
+            WebElement clickElement =  trElement.findElement(By.className("col")).findElement(By.tagName("a")) ;
+
+           //  WebDriverWait clickWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
+            WebDriverWait clickWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , 30 );
+            clickWait.until( ExpectedConditions.elementToBeClickable(clickElement) ) ;
             // open a new window tab
-            WebElement colElement =  trElement.findElement(By.className("col")) ;
-            colElement.findElement(By.tagName("a")).click();
+            clickElement.click();
 
             // waite window open and load
-            WebDriverWait windowWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
+           //  WebDriverWait windowWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
+            WebDriverWait windowWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , 5 );
             windowWait.until( ExpectedConditions.numberOfWindowsToBe(2));
 
             // switchTo new window tab
@@ -61,14 +67,17 @@ public class SeleniumFundListService {
                 if( !originalWindow.equalsIgnoreCase(windowHandle) )
                 {
                     this.seleniumStockDataService.getWebDriver().switchTo().window(windowHandle);
+                    logger.debug(" window switch from {} to {} " , originalWindow , windowHandle);
                     break;
                 }
             }
 
             // wait window load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(30) );
-            webDriverWait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy( By.id("ccmx_table") , By.className("table-model") ));
-
+           //  WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(30) );
+            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , 30 );
+            webDriverWait.until(
+                    ExpectedConditions.presenceOfNestedElementLocatedBy(By.id("ccmx_table") , By.className("table-model"))
+            ) ;
             // add fund list
             logger.debug(" start process stock table row : {} , find fund name list " , rowIndex);
             findCurrenWindowFundListWeblementTable(fundDataList) ;

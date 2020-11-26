@@ -48,9 +48,9 @@ public class LoadFundDataListAction {
             seleniumStockDataService.nextPageClickAction( nextPageElement ) ;
 
             // wait stock data load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+          //  WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
          //   webDriverWait.until( ExpectedConditions.visibilityOfNestedElementsLocatedBy( By.id(seleniumConfig.getStockTableDivID()) , By.className(seleniumConfig.getStockTableClass()) ));
-
+            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , 60 );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(
                     this.seleniumStockDataService.getWebDriver().findElement(By.id(seleniumConfig.getStockTableDivID()))
                     .findElement(By.className(seleniumConfig.getStockTableClass()))

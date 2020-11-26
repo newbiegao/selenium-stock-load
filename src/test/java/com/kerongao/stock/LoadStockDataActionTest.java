@@ -51,9 +51,7 @@ public class LoadStockDataActionTest {
     @Test
     public void loadStockAllPeriodDataTest (){
 
-        int pageLimit = 2 ;
-
-        int periodLimit = 1 ;
+        int periodLimit = 5 ;
 
         seleniumStockDataService.openUrl(STOCK_URL);
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData(periodLimit) ;

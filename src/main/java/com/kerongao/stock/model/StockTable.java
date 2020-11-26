@@ -120,20 +120,26 @@ public class StockTable {
 
     public void importWebElement(WebElement webElement){
 
-        this.elementText = webElement.getText() ;
+        try {
+            this.elementText = webElement.getText();
 
-        // get table columns
-        List<WebElement> webElementList =  webElement.findElements(By.tagName("td")) ;
+            // get table columns
+            List<WebElement> webElementList = webElement.findElements(By.tagName("td"));
 
-        this.stockCode = webElementList.get(1).getText() ;
-        this.stockName = webElementList.get(2).getText() ;
-        this.financialCount = Integer.valueOf( webElementList.get(4).getText());
-        this.stockCount = Double.valueOf( webElementList.get(5).getText() );
-        this.stockRate  = Double.valueOf(webElementList.get(6).getText()) ;
-        this.upDown  = webElementList.get(7).getText() ;
-        this.upDownCount = Double.valueOf(webElementList.get(8).getText()) ;
-        this.upDownRate = Double.valueOf(webElementList.get(9).getText()) ;
-
+            this.stockCode = webElementList.get(1).getText();
+            this.stockName = webElementList.get(2).getText();
+            this.financialCount = Integer.valueOf(webElementList.get(4).getText());
+            this.stockCount = Double.valueOf(webElementList.get(5).getText());
+            this.stockRate = Double.valueOf(webElementList.get(6).getText());
+            this.upDown = webElementList.get(7).getText();
+            this.upDownCount = Double.valueOf(webElementList.get(8).getText());
+            this.upDownRate = Double.valueOf(webElementList.get(9).getText());
+        }
+        catch ( Exception e )
+        {
+            System.out.println(e.getStackTrace()) ;
+            throw e ;
+        }
     }
 
 }

@@ -28,7 +28,7 @@ public class LoadFundDataListActionTest {
     @Test
     public void loadCurrentPeriodStockFundListTest(){
 
-        logger.debug(" load page : {} " , STOCK_URL );
+        logger.debug(" open page : {} " , STOCK_URL );
 
         seleniumStockDataService.openUrl(STOCK_URL);
 
@@ -36,7 +36,7 @@ public class LoadFundDataListActionTest {
 
         fundDataList.forEach( fundData -> {
 
-            System.out.println(fundData.getName() + "---" + fundData.getUrl()) ;
+            logger.debug(" load fund list , name : {} , url : {}  " , fundData.getName() , fundData.getUrl());
 
         } );
 

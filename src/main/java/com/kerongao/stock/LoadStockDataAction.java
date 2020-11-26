@@ -36,7 +36,8 @@ public class LoadStockDataAction {
             // change stock period and load data
             this.seleniumStockDataService.doStockPeriodSelectAction(options.get(i));
 
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+          //  WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , 5 );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
             if( i >= start && i < ( start + length ) ){
@@ -66,7 +67,8 @@ public class LoadStockDataAction {
             // change stock period and load data
             this.seleniumStockDataService.doStockPeriodSelectAction(option);
 
-            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+           //  WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
+            WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , 5 );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
 
             //  paged load stock table data
@@ -83,24 +85,31 @@ public class LoadStockDataAction {
      */
     public void loadStockOnePeriodData( String period  , List<StockTable> stockTableList ){
 
+        logger.debug(" start load stocks period : {} " , period );
+
         // get first page stock data
         List<WebElement>  firstStockTableRows = seleniumStockDataService.findCurrentStockTableRows() ;
         addStockTableElementToDataModel(firstStockTableRows , stockTableList , period ) ;
 
+        logger.debug(" load stocks period : {} , page : 0 , stocks : {}  " ,period , firstStockTableRows.size() );
+
         // next page stock data page
         WebElement nextPageElement = null ;
+
+        Integer pageCount  = 0 ;
 
         // do next page action and get other stock page data
         while ( (nextPageElement =  seleniumStockDataService.findNextPageElement()) != null  )
         {
-            seleniumStockDataService.nextPageClickAction( nextPageElement ) ;
+            pageCount ++ ;
 
-            // wait stock data load
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id(seleniumConfig.getStockTableDivID()))) ;
+            // do next page and wait page loaded
+            seleniumStockDataService.nextPageClickAction( nextPageElement ) ;
 
             List<WebElement> currentStockTableRows = seleniumStockDataService.findCurrentStockTableRows() ;
             addStockTableElementToDataModel(currentStockTableRows , stockTableList , period ) ;
+
+            logger.debug(" load stocks period : {} , page : {}  , stocks : {}  " , period ,pageCount ,  currentStockTableRows.size() );
         }
 
     }
