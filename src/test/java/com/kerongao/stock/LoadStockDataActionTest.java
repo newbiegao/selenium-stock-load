@@ -51,7 +51,7 @@ public class LoadStockDataActionTest {
     @Test
     public void loadStockAllPeriodDataTest (){
 
-        int periodLimit = 5 ;
+        int periodLimit = 3 ;
 
         seleniumStockDataService.openUrl(STOCK_URL);
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData(periodLimit) ;
@@ -62,22 +62,4 @@ public class LoadStockDataActionTest {
 
         assertThat( stockTableList ).isNotEmpty().describedAs("can't load stock data") ;
     }
-
-    @Test
-    public void loadStockOnePeriodDataTest(){
-
-        seleniumStockDataService.openUrl(STOCK_URL);
-
-        List<StockTable> stockTableList = new ArrayList<>() ;
-
-       loadStockDataAction.loadStockOnePeriodData("2020-09-30" , stockTableList  ) ;
-
-       stockTableList.forEach( stockTable -> {
-           System.out.println(stockTable.getElementText()) ;
-       } );
-
-        assertThat(stockTableList).isNotEmpty().describedAs( " can't load stock data  " ) ;
-
-    }
-
 }

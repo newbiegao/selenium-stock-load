@@ -32,33 +32,20 @@ public class LoadFundDataListAction {
 
         List<FundData> fundDataList = new ArrayList<>() ;
 
+        Integer pageIndex = 1 ;
+
         // load first page data
-        logger.debug(" start process stock table page : 0  , find fund name list ");
+        logger.debug(" start process stock table page : {}  , find fund name list " , pageIndex );
         seleniumFundListService.loadCurrentStockPageFundListToStockFundList(fundDataList) ;
 
         // next page stock data page
         WebElement nextPageElement = null ;
 
-        int pageIndex = 0 ;
-        while ( (nextPageElement =  seleniumStockDataService.findNextPageElement()) != null  )
+        while ( (pageIndex =  seleniumStockDataService.doNextPageClickAction()) > 0  )
         {
             pageIndex++ ;
 
-            // do next page click action
-            seleniumStockDataService.nextPageClickAction( nextPageElement ) ;
-
-            // wait stock data load
-          //  WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(seleniumConfig.getPageLoadTimeOut()) );
-         //   webDriverWait.until( ExpectedConditions.visibilityOfNestedElementsLocatedBy( By.id(seleniumConfig.getStockTableDivID()) , By.className(seleniumConfig.getStockTableClass()) ));
-            WebDriverWait webDriverWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , 60 );
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(
-                    this.seleniumStockDataService.getWebDriver().findElement(By.id(seleniumConfig.getStockTableDivID()))
-                    .findElement(By.className(seleniumConfig.getStockTableClass()))
-                    .findElement(By.tagName("tbody"))
-                    .findElements(By.tagName("tr")).get(0)
-                    .findElements(By.tagName("td")).get(4)
-            )) ;
-            logger.debug(" start process stock table page : {} , find fund name list " , pageIndex);
+            // load current stock table page rows fund list
             seleniumFundListService.loadCurrentStockPageFundListToStockFundList(fundDataList) ;
 
         }

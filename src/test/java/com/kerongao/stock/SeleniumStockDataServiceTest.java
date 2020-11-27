@@ -72,29 +72,16 @@ public class SeleniumStockDataServiceTest {
     }
 
     @Test
-    public void findStockTableNextPageTest(){
-
-        seleniumStockDataService.openUrl(STOCK_URL);
-        WebElement webElement = seleniumStockDataService.findNextPageElement() ;
-        logger.debug( " find next page link : {} " , webElement.getText() );
-        assertThat(webElement.getText()).isEqualTo("下一页").describedAs( " can not find next stock page 下一页 info :{} " , webElement.getText() );
-    }
-
-    @Test
-    public void clickNextPageActionTest()  {
+    public void doNextPageClickActionTest()  {
 
         seleniumStockDataService.openUrl(STOCK_URL);
 
-        WebElement webElement = null ;
-        int page = -1 ;
-        while ( (  webElement = seleniumStockDataService.findNextPageElement()) != null  )
-        {
-            page =  seleniumStockDataService.nextPageClickAction(webElement);
-             // wait page load stock data
-            logger.debug(" current page index = {} " , page );
+        Integer currentPage = 0 ;
+        while( (  currentPage = seleniumStockDataService.doNextPageClickAction()) > 0  ){
+            logger.debug(" current loaded page : {} " , currentPage );
         }
 
-        assertThat( page ).isGreaterThan( 0 ).describedAs( " do next page aciton error : {} " , page ) ;
+        assertThat( currentPage ).isLessThan(0).describedAs( " do next page aciton error ") ;
 
     }
 
@@ -109,7 +96,7 @@ public class SeleniumStockDataServiceTest {
             System.out.println( option ) ;
         } );
 
-        assertThat(options).isNotEmpty().describedAs(" can't find stock period select options  ") ;
+        assertThat(options).isNotEmpty().describedAs(" can't find stock period select options ") ;
 
     }
 
@@ -124,7 +111,6 @@ public class SeleniumStockDataServiceTest {
             System.out.println(" do action data : " + option );
             this.seleniumStockDataService.doStockPeriodSelectAction(option);
 
-          //  WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
             WebDriverWait webDriverWait = new WebDriverWait( seleniumStockDataService.getWebDriver() , 5 );
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("default_table"))) ;
 

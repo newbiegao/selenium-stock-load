@@ -36,7 +36,7 @@ public class SeleniumStockDataService {
         this.webDriver = webDriver;
     }
 
-    public String loadPageHtml( String url  ){
+    public String loadPageHtml(String url  ){
 
         webDriver.get(url);
         return webDriver.getPageSource() ;
@@ -49,72 +49,40 @@ public class SeleniumStockDataService {
 
     public List<WebElement> findCurrentStockTableRows(){
 
-        WebElement tableElement = findCurrentStockTable() ;
-
-        WebElement tbody  = tableElement.findElement(By.tagName("tbody")) ;
-        List<WebElement> trList = tbody.findElements(By.tagName("tr")) ;
-
+        List<WebElement> trList = this.webDriver.findElements(By.cssSelector("div[id='default_table'] > table > tbody > tr")) ;
         return trList ;
     }
 
     public WebElement findCurrentStockTable( ){
 
-       WebElement webElement = this.webDriver.findElement(By.id(seleniumConfig.getStockTableDivID()))
-               .findElement(By.className(seleniumConfig.getStockTableClass())) ;
-       return webElement ;
-    }
-
-    public WebElement findNextPageElement(){
-
-        List<WebElement> webElements = this.webDriver.findElement(By.className(seleniumConfig.getStockNextPageClass()))
-                .findElements(By.tagName("a")) ;
-
-        webElements.removeIf( webElement -> {
-
-            if( webElement.getText().equals(seleniumConfig.getStockNextPageText()) )
-            {
-                return false ;
-            }
-            else{
-                return true ;
-            }
-        }  ) ;
-
-        if( webElements.isEmpty() ) {
-            logger.warn(" can't find next page <a> element ");
-            return  null  ;
-        }
-        return webElements.get(0) ;
+        WebElement webElement = this.webDriver.findElement(By.cssSelector("div[id='default_table'] > table")) ;
+        return webElement ;
     }
 
     /**
-     *  do next page action
-     * @param nextPageElement
-     * @return next page index , if no page find return -1
+     * do next page action
+     * @return next page Index
      */
-    public int  nextPageClickAction( WebElement nextPageElement ){
+    public int doNextPageClickAction(){
 
-        nextPageElement.click();
+        // find last <a> element maybe [last page] or [next page]
+        WebElement nextPageWebElement = this.webDriver.findElement(By.cssSelector("div[id='default_table_pager'] > div > a:last-child")) ;
+        if( nextPageWebElement.getText().equalsIgnoreCase("下一页") ) {
 
-        // wait stock data load
-       //  WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , Duration.ofSeconds(5) );
-        WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 5 );
-        webDriverWait.until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(
-                By.id(seleniumConfig.getStockTableDivID()) ,
-                By.className(seleniumConfig.getStockTableClass())
-        )) ;
+            // do next page action
+            nextPageWebElement.click();
 
-        // find current page
-        WebElement webElement = this.webDriver.findElement(By.className(seleniumConfig.getStockNextPageClass()))
-                .findElement(By.className("active")) ;
+            // wait page load finished
+            WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 30 );
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td:nth-child(5) > a"))) ;
 
-        if ( webElement == null || webElement.getText().isEmpty() ) {
-            logger.warn(" can't find current page when next page click ");
-            return  -1 ;
+            // after next page and return current page
+            WebElement currentPageWebElement = this.webDriver.findElement(By.cssSelector("div[id='default_table_pager'] > div > a[class='active']")) ;
+            return Integer.valueOf(currentPageWebElement.getText()) ;
         }
-
-        logger.debug(" do next page click , get new current page : {} " , webElement.getText() );
-        return  Integer.valueOf(webElement.getText()) ;
+        else {
+            return -1 ;
+        }
     }
 
     public void closeWindow() {
@@ -126,6 +94,10 @@ public class SeleniumStockDataService {
 
     public List<String> findStockPeriodSelectOptions(){
 
+        // wait page load finished
+        WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 30 );
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td:nth-child(5) > a"))) ;
+
         WebElement selectElement = this.webDriver.findElement(By.className("slt")) ;
         List<WebElement> optionElements = selectElement.findElements(By.tagName("option")) ;
         List<String> options = new ArrayList<>() ;
@@ -136,11 +108,18 @@ public class SeleniumStockDataService {
         return options ;
     }
 
+    /**
+     * do stock period selection navigate page to next period
+     * @param period
+     */
     public void doStockPeriodSelectAction( String period ){
 
         WebElement selectElement = this.webDriver.findElement(By.className("slt")) ;
          new Select(selectElement).selectByValue(period);
 
+         // wait page page load
+        WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 30 );
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td:nth-child(5) > a"))) ;
     }
 
 }

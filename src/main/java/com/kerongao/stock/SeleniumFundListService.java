@@ -31,7 +31,7 @@ public class SeleniumFundListService {
 
     /**
      * load current stock page data and open each fund link page to get fund list
-     * @return
+     * @param fundDataList
      */
     public void loadCurrentStockPageFundListToStockFundList( List<FundData> fundDataList ){
 
@@ -50,7 +50,7 @@ public class SeleniumFundListService {
             // find click <a>
             WebElement clickElement =  trElement.findElement(By.className("col")).findElement(By.tagName("a")) ;
 
-           //  WebDriverWait clickWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , Duration.ofSeconds(5) );
+            // wait page loaded
             WebDriverWait clickWait = new WebDriverWait( this.seleniumStockDataService.getWebDriver() , 30 );
             clickWait.until( ExpectedConditions.elementToBeClickable(clickElement) ) ;
             // open a new window tab
