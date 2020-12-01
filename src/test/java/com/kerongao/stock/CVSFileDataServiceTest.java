@@ -33,7 +33,7 @@ public class CVSFileDataServiceTest {
     @Test
     public void loadStockDataToExcelFileTest(){
 
-        Integer stockPeriodLimit = 2 ;
+        Integer stockPeriodLimit = 5 ;
         seleniumStockDataService.openUrl(STOCK_URL);
         cvsFileDataService.loadStockDataToExcelFile(stockPeriodLimit);
     }
@@ -41,7 +41,7 @@ public class CVSFileDataServiceTest {
     @Test
     public void loadStockDataToExcelFileTestRange(){
 
-        Integer start = 3 ;
+        Integer start = 4 ;
         Integer length = 1 ;
         seleniumStockDataService.openUrl(STOCK_URL);
         cvsFileDataService.loadStockDataToExcelFile(start , length);

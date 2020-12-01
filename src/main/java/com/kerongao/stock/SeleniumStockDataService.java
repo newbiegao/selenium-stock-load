@@ -73,8 +73,9 @@ public class SeleniumStockDataService {
             nextPageWebElement.click();
 
             // wait page load finished
-            WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 30 );
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td:nth-child(5) > a"))) ;
+            WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 60 );
+           // webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td:nth-child(5) > a"))) ;
+            webDriverWait.until(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td") , 1 )) ;
 
             // after next page and return current page
             WebElement currentPageWebElement = this.webDriver.findElement(By.cssSelector("div[id='default_table_pager'] > div > a[class='active']")) ;
@@ -114,11 +115,13 @@ public class SeleniumStockDataService {
      */
     public void doStockPeriodSelectAction( String period ){
 
-        WebElement selectElement = this.webDriver.findElement(By.className("slt")) ;
-         new Select(selectElement).selectByValue(period);
-
-         // wait page page load
         WebDriverWait webDriverWait = new WebDriverWait( this.webDriver , 30 );
+        webDriverWait.until( ExpectedConditions.elementToBeClickable(By.className("slt")) ) ;
+
+        WebElement selectElement = this.webDriver.findElement(By.className("slt")) ;
+        new Select(selectElement).selectByValue(period);
+
+        // wait page page load
         webDriverWait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id='default_table'] > table > tbody > tr:nth-child(1) > td:nth-child(5) > a"))) ;
     }
 
