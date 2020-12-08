@@ -13,3 +13,8 @@ html.stockNextPageClass: pagerbox
 html.stockNextPageText: 下一页
 html.pageLoadTimeOut: 2
 
+
+html.ylbxStockPagePageUrl: http://cwzx.shdjt.com/cwcx.asp?gdmc=%D1%F8%C0%CF%B1%A3%CF%D5&nopd=1
+
+
+

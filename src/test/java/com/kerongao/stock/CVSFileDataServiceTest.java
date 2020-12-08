@@ -21,6 +21,13 @@ public class CVSFileDataServiceTest {
     @Autowired
     private SeleniumStockDataService seleniumStockDataService;
 
+    @Autowired
+    private YLBXStockPageService ylbxStockPageService ;
+
+    @Autowired
+    private SeleniumConfig seleniumConfig ;
+
+
     private static String STOCK_URL = "http://data.eastmoney.com/zlsj/2020-09-30-3-2.html" ;
 
 
@@ -31,20 +38,28 @@ public class CVSFileDataServiceTest {
     }
 
     @Test
-    public void loadStockDataToExcelFileTest(){
+    public void saveYLBXStockDataToExcelFileTest(){
 
-        Integer stockPeriodLimit = 5 ;
-        seleniumStockDataService.openUrl(STOCK_URL);
-        cvsFileDataService.loadStockDataToExcelFile(stockPeriodLimit);
+        ylbxStockPageService.openUrl(seleniumConfig.getYlbxStockPagePageUrl());
+        cvsFileDataService.saveYLBXStockDataToExcelFile();
+
     }
 
     @Test
-    public void loadStockDataToExcelFileTestRange(){
+    public void saveStockDataToExcelFileTest(){
+
+        Integer stockPeriodLimit = 5 ;
+        seleniumStockDataService.openUrl(STOCK_URL);
+        cvsFileDataService.saveStockDataToExcelFile(stockPeriodLimit);
+    }
+
+    @Test
+    public void saveRangeStockDataToExcelFileTest(){
 
         Integer start = 4 ;
         Integer length = 1 ;
         seleniumStockDataService.openUrl(STOCK_URL);
-        cvsFileDataService.loadStockDataToExcelFile(start , length);
+        cvsFileDataService.saveStockDataToExcelFile(start , length);
     }
 
 }

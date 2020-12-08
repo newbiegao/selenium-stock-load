@@ -44,6 +44,17 @@ public class SeleniumConfig {
     @Value("${html.pageLoadTimeOut}")
     private Integer pageLoadTimeOut ;
 
+    @Value("${html.ylbxStockPagePageUrl}")
+    private String ylbxStockPagePageUrl ;
+
+    public String getYlbxStockPagePageUrl() {
+        return ylbxStockPagePageUrl;
+    }
+
+    public void setYlbxStockPagePageUrl(String ylbxStockPagePageUrl) {
+        this.ylbxStockPagePageUrl = ylbxStockPagePageUrl;
+    }
+
     public Integer getPageLoadTimeOut() {
         return pageLoadTimeOut;
     }

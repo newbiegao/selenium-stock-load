@@ -1,6 +1,7 @@
 package com.kerongao.stock;
 
 import com.kerongao.stock.model.StockTable;
+import com.kerongao.stock.model.YLBXStockTable;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -24,11 +25,14 @@ public class CVSFileDataService {
     @Autowired
     private LoadStockDataAction loadStockDataAction ;
 
+    @Autowired
+    private YLBXStockPageService ylbxStockPageService ;
+
     /**
      * load period stock data by periodLimit to excel file
      * @param periodLimit if periodLimit < 0 then load all period stock data
      */
-    public void loadStockDataToExcelFile( Integer periodLimit  ){
+    public void saveStockDataToExcelFile( Integer periodLimit  ){
 
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodData( periodLimit ) ;
         writeStockDataToExcelFile(stockTableList) ;
@@ -40,15 +44,195 @@ public class CVSFileDataService {
      * @param start  period start
      * @param periodLength period count
      */
-    public void loadStockDataToExcelFile(Integer start  ,  Integer periodLength  ){
+    public void saveStockDataToExcelFile(Integer start  ,  Integer periodLength  ){
 
         List<StockTable> stockTableList = loadStockDataAction.loadStockAllPeriodDataByRange(start , periodLength) ;
-
         writeStockDataToExcelFile(stockTableList) ;
 
     }
 
-    public void writeStockDataToExcelFile(List<StockTable> stockTableList ){
+    /**
+     * load and save YLBX stock date to excel file
+     */
+    public void saveYLBXStockDataToExcelFile(){
+
+        List<YLBXStockTable> ylbxStockTableList = ylbxStockPageService.loadYLBXStockDataRowsToDataModle() ;
+        writeYLBXStockTableToExcelFile(ylbxStockTableList) ;
+
+    }
+
+    private void writeYLBXStockTableToExcelFile( List<YLBXStockTable> ylbxStockTables ){
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("养老保险基金股票池");
+
+        Integer index = 0  ;
+        for( YLBXStockTable  ylbxStockTable :  ylbxStockTables ) {
+            addYLBXStockDataTableRow( workbook , sheet , ylbxStockTable , index ) ;
+            index++ ;
+
+        } ;
+
+        String path = saveFile(workbook) ;
+
+        logger.debug(" load YLBX stock table info Excel file , path : {} " , path );
+
+    }
+
+    private void addYLBXStockDataTableRow( Workbook workbook ,  Sheet sheet , YLBXStockTable stockTable , Integer rowIndex ){
+
+        /**
+         *  1:股票代码	2:股票名称	3:原价	4:现价	5:区间涨幅 7:更新日期
+         *  9:持股数(万)	10:市值(亿)	12:比例 (%)	14:增减仓	15:数量
+         *
+         */
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+
+        Row row = sheet.createRow(rowIndex);
+
+        // 股票代码
+        Cell cell = row.createCell(0);
+        cell.setCellValue(stockTable.getStockCod1());
+        cell.setCellStyle(style);
+
+        // 股票名称
+        cell = row.createCell(1);
+        cell.setCellValue(stockTable.getStockName2());
+        cell.setCellStyle(style);
+
+        // 原价
+        cell = row.createCell(2);
+        cell.setCellValue(stockTable.getOldPrice3());
+        cell.setCellStyle(style);
+
+        // 现价
+        cell = row.createCell(3);
+        cell.setCellValue(stockTable.getNewPrice4());
+        cell.setCellStyle(style);
+
+        // 区间涨幅
+        cell = row.createCell(4);
+        cell.setCellValue(stockTable.getPriceRate5());
+        cell.setCellStyle(style);
+
+        // 更新日期
+        cell = row.createCell(5);
+        cell.setCellValue(stockTable.getPeriod7());
+        cell.setCellStyle(style);
+
+        // 持股数(万)
+        cell = row.createCell(6);
+        cell.setCellValue(stockTable.getStockCount9());
+        cell.setCellStyle(style);
+
+        // 市值(亿)
+        cell = row.createCell(7);
+        cell.setCellValue(stockTable.getStockValue10());
+        cell.setCellStyle(style);
+
+        // 比例 (%)
+        cell = row.createCell(8);
+        cell.setCellValue(stockTable.getStockRate12());
+        cell.setCellStyle(style);
+
+        // 增减仓
+        cell = row.createCell(9);
+        cell.setCellValue(stockTable.getUpDown14());
+        cell.setCellStyle(style);
+
+        // 数量
+        cell = row.createCell(10);
+        cell.setCellValue(stockTable.getUnDownCount15());
+        cell.setCellStyle(style);
+
+    }
+
+    private void createYLBXStockDataTableHeader( Workbook workbook ,  Sheet sheet ){
+
+        /**
+         *  1:股票代码	2:股票名称	3:原价	4:现价	5:区间涨幅 7:更新日期
+         *  9:持股数(万)	10:市值(亿)	12:比例 (%)	14:增减仓	15:数量
+         *
+         */
+
+        sheet.setColumnWidth(0, 5000);
+        sheet.setColumnWidth(1, 5000);
+        sheet.setColumnWidth(2, 5000);
+        sheet.setColumnWidth(3, 5000);
+        sheet.setColumnWidth(4, 5000);
+        sheet.setColumnWidth(5, 5000);
+        sheet.setColumnWidth(6, 5000);
+        sheet.setColumnWidth(7, 5000);
+        sheet.setColumnWidth(8, 5000);
+        sheet.setColumnWidth(9, 5000);
+        sheet.setColumnWidth(10, 5000);
+
+        Row header = sheet.createRow(0);
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // column0
+        Cell headerCell = header.createCell(0);
+        headerCell.setCellValue("股票代码");
+        headerCell.setCellStyle(headerStyle);
+
+        // column1
+        headerCell = header.createCell(1);
+        headerCell.setCellValue("股票名称");
+        headerCell.setCellStyle(headerStyle);
+
+        // column2
+        headerCell = header.createCell(2);
+        headerCell.setCellValue("原价");
+        headerCell.setCellStyle(headerStyle);
+
+        // column3
+        headerCell = header.createCell(3);
+        headerCell.setCellValue("现价");
+        headerCell.setCellStyle(headerStyle);
+
+        // column4
+        headerCell = header.createCell(4);
+        headerCell.setCellValue("区间涨幅");
+        headerCell.setCellStyle(headerStyle);
+
+        // column5
+        headerCell = header.createCell(5);
+        headerCell.setCellValue("更新日期");
+        headerCell.setCellStyle(headerStyle);
+
+        // column6
+        headerCell = header.createCell(6);
+        headerCell.setCellValue("持股数(万)");
+        headerCell.setCellStyle(headerStyle);
+
+        // column7
+        headerCell = header.createCell(7);
+        headerCell.setCellValue("市值(亿)");
+        headerCell.setCellStyle(headerStyle);
+
+        // column8
+        headerCell = header.createCell(8);
+        headerCell.setCellValue("比例 (%)");
+        headerCell.setCellStyle(headerStyle);
+
+        // column9
+        headerCell = header.createCell(9);
+        headerCell.setCellValue("增减仓");
+        headerCell.setCellStyle(headerStyle);
+
+        // column10
+        headerCell = header.createCell(10);
+        headerCell.setCellValue("数量");
+        headerCell.setCellStyle(headerStyle);
+
+    }
+
+
+    private void writeStockDataToExcelFile(List<StockTable> stockTableList ){
 
         Workbook workbook = new XSSFWorkbook();
         String currentSheetName = "" ;
@@ -63,12 +247,12 @@ public class CVSFileDataService {
             if(!stockTable.getPeriod().equalsIgnoreCase(currentSheetName)) {
                 currentSheetName = stockTable.getPeriod() ;
                 sheet = workbook.createSheet(currentSheetName);
-                createHeader(workbook , sheet) ;
+                createStockDataTableHeader(workbook , sheet) ;
                 rowIndex = 1 ;
                 sheetCount ++ ;
             }
             // add row to sheet
-            addRow(workbook , sheet , stockTable , rowIndex ) ;
+            addStockDataTableRow(workbook , sheet , stockTable , rowIndex ) ;
 
             rowIndex++ ;
         }
@@ -77,7 +261,7 @@ public class CVSFileDataService {
         logger.debug(" load stock data rowCount : {}  , sheetCount: {} ,  and save to file : {} " , rowCount , sheetCount , fileName );
     }
 
-    private void createHeader( Workbook workbook ,  Sheet sheet ){
+    private void createStockDataTableHeader( Workbook workbook ,  Sheet sheet ){
 
         // 股票代码	股票简称		持有社保家数(家)	持股总数(万股)	占总股本比例(%)	持股变化	 持股变动数值(万股)  持股变动比例(%)
 
@@ -137,7 +321,7 @@ public class CVSFileDataService {
 
     }
 
-    private void addRow( Workbook workbook ,  Sheet sheet , StockTable stockTable , Integer rowIndex ){
+    private void addStockDataTableRow( Workbook workbook ,  Sheet sheet , StockTable stockTable , Integer rowIndex ){
 
         // 股票代码	股票简称		持有社保家数(家)	持股总数(万股)	占总股本比例(%)	持股变化	 持股变动数值(万股)  持股变动比例(%)
 
