@@ -62,4 +62,11 @@ public class CVSFileDataServiceTest {
         cvsFileDataService.saveStockDataToExcelFile(start , length);
     }
 
+    @Test
+    public void saveFundListToExcelFileTest(){
+
+        seleniumStockDataService.openUrl(STOCK_URL);
+        cvsFileDataService.saveFundListToExcelFile();
+    }
+
 }

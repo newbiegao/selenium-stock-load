@@ -1,5 +1,6 @@
 package com.kerongao.stock;
 
+import com.kerongao.stock.model.FundData;
 import com.kerongao.stock.model.StockTable;
 import com.kerongao.stock.model.YLBXStockTable;
 import org.apache.poi.ss.usermodel.*;
@@ -27,6 +28,9 @@ public class CVSFileDataService {
 
     @Autowired
     private YLBXStockPageService ylbxStockPageService ;
+
+    @Autowired
+    private LoadFundDataListAction loadFundDataListAction ;
 
     /**
      * load period stock data by periodLimit to excel file
@@ -58,6 +62,51 @@ public class CVSFileDataService {
 
         List<YLBXStockTable> ylbxStockTableList = ylbxStockPageService.loadYLBXStockDataRowsToDataModle() ;
         writeYLBXStockTableToExcelFile(ylbxStockTableList) ;
+
+    }
+
+    /**
+     * load and save Fund name and url list to excel file
+     */
+    public void saveFundListToExcelFile(){
+
+        List<FundData> fundDataList = loadFundDataListAction.loadCurrentPeriodStockFundList() ;
+        writeFundDataListToExcelFile(fundDataList) ;
+
+    }
+
+    private void writeFundDataListToExcelFile( List<FundData>  fundDataList ) {
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("社保基金名称列表");
+
+        Integer index = 0  ;
+        for( FundData fundData : fundDataList ){
+            addFundDataToRow( workbook , sheet ,  fundData , index ) ;
+            index++ ;
+        }
+
+        String path = saveFile(workbook) ;
+        logger.debug(" load Fund data list info Excel file , path : {} " , path );
+
+    }
+
+    private void addFundDataToRow(Workbook workbook ,  Sheet sheet ,  FundData fundData , Integer index ){
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+
+        Row row = sheet.createRow(index);
+
+        // 社保名称
+        Cell cell = row.createCell(0);
+        cell.setCellValue(fundData.getName());
+        cell.setCellStyle(style);
+
+        // 社保持仓连接地址
+        cell = row.createCell(1);
+        cell.setCellValue(fundData.getUrl());
+        cell.setCellStyle(style);
 
     }
 
